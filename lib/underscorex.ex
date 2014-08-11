@@ -63,14 +63,14 @@ defmodule Underscorex.Iterators do
 
 
 
-      def takeitem(obj, propname) when is_record(obj), do: takeitem(obj.to_keywords, propname)
+      def takeitem(obj, propname) when is_tuple(obj), do: takeitem(obj.to_keywords, propname)
       def takeitem(obj, propname), do: Dict.get(obj, propname, nil)
-      def takeitem(obj, propname, default) when is_record(obj), do: takeitem(obj.to_keywords, propname, default)
+      def takeitem(obj, propname, default) when is_tuple(obj), do: takeitem(obj.to_keywords, propname, default)
       def takeitem(obj, propname, default), do: Dict.get(obj, propname, default)
 
-      def pluck(col, propname) when is_record(col), do: pluck(col.to_keywords, propname)
+      def pluck(col, propname) when is_tuple(col), do: pluck(col.to_keywords, propname)
       def pluck(col, propname), do: col |> Enum.map fn(item) -> takeitem(item, propname) end
-      def pluck(col, propname, default) when is_record(col), do: pluck(col.to_keywords, propname, default)
+      def pluck(col, propname, default) when is_tuple(col), do: pluck(col.to_keywords, propname, default)
       def pluck(col, propname, default), do: col |> Enum.map fn(item) -> takeitem(item, propname, default) end
 
       def sort_by(col), do: Enum.sort col
@@ -182,8 +182,8 @@ defmodule Underscorex.Utility do
       def identity(_), do: true
 
       def matches(obj, attrs) when obj == attrs, do: true
-      def matches(obj, attrs) when is_record(obj), do: matches(obj.to_keywords, attrs)
-      def matches(obj, attrs) when is_record(attrs), do: matches(obj, attrs.to_keywords)
+      def matches(obj, attrs) when :erlang.is_tuple(obj), do: matches(obj.to_keywords, attrs)
+      def matches(obj, attrs) when :erlang.is_tuple(attrs), do: matches(obj, attrs.to_keywords)
       def matches(obj, attrs) do
          Enum.map(Dict.keys(attrs), fn(attr_keys) -> 
           case Dict.has_key? obj, attr_keys do
